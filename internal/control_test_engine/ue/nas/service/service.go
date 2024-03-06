@@ -6,7 +6,7 @@ import (
 	"my5G-RANTester/internal/control_test_engine/ue/state"
 	"net"
 	"strconv"
-	// "time"
+	"time"
 
 	"github.com/prometheus/common/log"
 )
@@ -45,39 +45,35 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 	conn := ue.GetUnixConn()
 
 	
-	defer func() {
-		err := conn.Close()
-		log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
-		if err != nil {
-			fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
-		}
-	}()
+	// defer func() {
+	// 	err := conn.Close()
+	// 	log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
+	// 	if err != nil {
+	// 		fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
+	// 	}
+	// }()
 	
 	
 	for {
 
 		// read message.
-		// if registered continue else break
-		// if ue.GetStateSM() == SM5G_PDU_SESSION_ACTIVE{
-		// 	conn.SetReadDeadline(time.Time{})
-		// } else {
-		// 	timeoutDuration := 1 * time.Second
-		// 	conn.SetReadDeadline(time.Now().Add(timeoutDuration))
-		// }
-		
+		if ue.GetStateSM() == SM5G_PDU_SESSION_ACTIVE{
+			conn.SetReadDeadline(time.Time{})
+		} else {
+			timeoutDuration := 10 * time.Second
+			conn.SetReadDeadline(time.Now().Add(timeoutDuration))
+		}
 		n, err := conn.Read(buf[:])
 		if err != nil {
-			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
-			log.Error("*****Error = ", err)
 			ueTerminationSignal <- 1
-			return
+			log.Warn("****Read Error on ue = ", ue.GetMsin())
+			break
 		}
-		
+
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState(ue, forwardData, ueRegistrationSignal)
-
+		go state.DispatchState(ue, forwardData)
 	}
 }
