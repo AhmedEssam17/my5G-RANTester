@@ -5,6 +5,7 @@ import (
 
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
+	"sync"
 
 	"os"
 
@@ -136,9 +137,13 @@ func main() {
 					log.Info("[TESTER][AMF] AMF IP/Port: ", cfg.AMF.Ip, "/", cfg.AMF.Port)
 					log.Info("---------------------------------------")
 
+					wg := sync.WaitGroup{}
+
 					for i := 0; i < numTesters; i++ {
 						go templates.TestMultiUesMultiGNBsSeq(numUes, numGNBs, i)
+						wg.Add(1)
 					}
+					wg.Wait()
 
 					return nil
 				},
