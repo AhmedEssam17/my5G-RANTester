@@ -30,11 +30,11 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 
 	if i != 0 {
 		gnbIDInt, _ := strconv.Atoi(cfg.GNodeB.PlmnList.GnbId)
-		gnbIDInt += (cfg.GNodeB.GnbNum / cfg.Tester.TesterNum) * i
+		gnbIDInt += numGNBs * i
 		cfg.GNodeB.PlmnList.GnbId = fmt.Sprintf("%06d", gnbIDInt)
 
 		msinInt, _ := strconv.Atoi(cfg.Ue.Msin)
-		msinInt += (cfg.Ue.UeNum / cfg.Tester.TesterNum) * i
+		msinInt += (numUes / cfg.Tester.TesterNum) * i
 		cfg.Ue.Msin = strconv.Itoa(msinInt)
 
 		cfg.GNodeB.ControlIF.Port += 1000 * i
