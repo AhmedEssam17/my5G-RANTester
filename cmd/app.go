@@ -6,6 +6,7 @@ import (
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/templates"
 	"sync"
+	"time"
 
 	"os"
 
@@ -142,6 +143,7 @@ func main() {
 					for i := 0; i < numTesters; i++ {
 						go templates.TestMultiUesMultiGNBsSeq(numUes, numGNBs, i)
 						wg.Add(1)
+						time.Sleep(200 * time.Millisecond)
 					}
 					wg.Wait()
 
