@@ -72,8 +72,8 @@ func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan c
 
 	// Block until a signal is received.
 	<-sigGnb
-	monitorGnbs <- conf
 	gnb.Terminate()
+	monitorGnbs <- conf
 	wg.Done()
 	// os.Exit(0)
 
