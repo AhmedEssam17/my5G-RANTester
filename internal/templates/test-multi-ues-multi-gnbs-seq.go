@@ -48,6 +48,19 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 
 	baseGnbID := gnbID
 
+	monitorGnbs := make(chan config.Config, numGNBs)
+
+	go func(monitorGnbs chan config.Config) {
+		for {
+			select {
+			case gnbCfg := <-monitorGnbs:
+				go gnb.InitGnbMonitored(gnbCfg, &wg, monitorGnbs)
+				wg.Add(1)
+				time.Sleep(1 * time.Second)
+			}
+		}
+	}(monitorGnbs)
+
 	for i := 0; i < numGNBs; i++ {
 		//newGnbID := fmt.Sprintf("%d", gnbID)
 		newGnbID := constructGnbID(gnbID)
@@ -57,7 +70,7 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 		log.Info("Initializing gnb with GnbId = ", cfg.GNodeB.PlmnList.GnbId)
 		log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
 
-		go gnb.InitGnb(cfg, &wg)
+		go gnb.InitGnbMonitored(cfg, &wg, monitorGnbs)
 		wg.Add(1)
 		time.Sleep(1 * time.Second)
 

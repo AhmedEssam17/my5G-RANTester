@@ -1,7 +1,6 @@
 package gnb
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	serviceNas "my5G-RANTester/internal/control_test_engine/gnb/nas/service"
@@ -12,7 +11,73 @@ import (
 	"os/signal"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
+
+func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan config.Config) {
+
+	// instance new gnb.
+	gnb := &context.GNBContext{}
+
+	// new gnb context.
+	gnb.NewRanGnbContext(
+		conf.GNodeB.PlmnList.GnbId,
+		conf.GNodeB.PlmnList.Mcc,
+		conf.GNodeB.PlmnList.Mnc,
+		conf.GNodeB.PlmnList.Tac,
+		conf.GNodeB.SliceSupportList.Sst,
+		conf.GNodeB.SliceSupportList.Sd,
+		conf.GNodeB.ControlIF.Ip,
+		conf.GNodeB.DataIF.Ip,
+		conf.GNodeB.ControlIF.Port,
+		conf.GNodeB.DataIF.Port)
+
+	// start communication with AMF (server SCTP).
+
+	// log.Info("conf.GNodeB.PlmnList.GnbId ", conf.GNodeB.PlmnList.GnbId)
+	// log.Info("conf.GNodeB.PlmnList.Mcc ", conf.GNodeB.PlmnList.Mcc)
+	// log.Info("conf.GNodeB.PlmnList.Mnc ", conf.GNodeB.PlmnList.Mnc)
+	// log.Info("conf.GNodeB.PlmnList.Tac ", conf.GNodeB.PlmnList.Tac)
+	// log.Info("conf.GNodeB.SliceSupportList.Sst ", conf.GNodeB.SliceSupportList.Sst)
+	// log.Info("conf.GNodeB.SliceSupportList.Sd ", conf.GNodeB.SliceSupportList.Sd)
+	// log.Info("conf.GNodeB.ControlIF.Ip ", conf.GNodeB.ControlIF.Ip)
+	// log.Info("conf.GNodeB.DataIF.Ip ", conf.GNodeB.DataIF.Ip)
+	// log.Info("conf.GNodeB.ControlIF.Port ", conf.GNodeB.ControlIF.Port)
+	// log.Info("conf.GNodeB.DataIF.Port ", conf.GNodeB.DataIF.Port)
+
+	// new AMF context.
+	amf := gnb.NewGnBAmf(conf.AMF.Ip, conf.AMF.Port)
+
+	// start communication with AMF(SCTP).
+	if err := serviceNgap.InitConn(amf, gnb); err != nil {
+		log.Fatal("Error in", err)
+	} else {
+		log.Info("[GNB] SCTP/NGAP service is running")
+		// wg.Add(1)
+	}
+
+	// start communication with UE (server UNIX sockets).
+	if err := serviceNas.InitServer(gnb); err != nil {
+		log.Fatal("Error in ", err)
+	} else {
+		log.Info("[GNB] UNIX/NAS service is running")
+	}
+
+	trigger.SendNgSetupRequest(gnb, amf)
+
+	// control the signals
+	sigGnb := make(chan os.Signal, 1)
+	signal.Notify(sigGnb, os.Interrupt)
+
+	// Block until a signal is received.
+	<-sigGnb
+	monitorGnbs <- conf
+	gnb.Terminate()
+	wg.Done()
+	// os.Exit(0)
+
+}
 
 func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 
@@ -41,10 +106,9 @@ func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 	// log.Info("conf.GNodeB.SliceSupportList.Sst ", conf.GNodeB.SliceSupportList.Sst)
 	// log.Info("conf.GNodeB.SliceSupportList.Sd ", conf.GNodeB.SliceSupportList.Sd)
 	// log.Info("conf.GNodeB.ControlIF.Ip ", conf.GNodeB.ControlIF.Ip)
-	// log.Info("conf.GNodeB.DataIF.Ip ", conf.GNodeB.DataIF.Ip) 
-	// log.Info("conf.GNodeB.ControlIF.Port ", conf.GNodeB.ControlIF.Port) 
-	// log.Info("conf.GNodeB.DataIF.Port ", conf.GNodeB.DataIF.Port) 
-
+	// log.Info("conf.GNodeB.DataIF.Ip ", conf.GNodeB.DataIF.Ip)
+	// log.Info("conf.GNodeB.ControlIF.Port ", conf.GNodeB.ControlIF.Port)
+	// log.Info("conf.GNodeB.DataIF.Port ", conf.GNodeB.DataIF.Port)
 
 	// new AMF context.
 	amf := gnb.NewGnBAmf(conf.AMF.Ip, conf.AMF.Port)
