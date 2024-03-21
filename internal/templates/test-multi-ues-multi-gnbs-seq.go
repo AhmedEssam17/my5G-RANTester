@@ -55,7 +55,6 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 			select {
 			case gnbCfg := <-monitorGnbs:
 				log.Info("Re-Initializing gnb with GnbId = ", gnbCfg.GNodeB.PlmnList.GnbId)
-				log.Info("Re-Initializing gnb with gnbControlPort = ", gnbCfg.GNodeB.ControlIF.Port)
 				go gnb.InitGnbMonitored(gnbCfg, &wg, monitorGnbs)
 				wg.Add(1)
 				time.Sleep(1 * time.Second)
@@ -70,8 +69,6 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 		cfg.GNodeB.PlmnList.GnbId = newGnbID
 		cfg.GNodeB.ControlIF.Port = gnbControlPort + i
 		log.Info("Initializing gnb with GnbId = ", cfg.GNodeB.PlmnList.GnbId)
-		log.Info("Initializing gnb with gnbControlPort = ", cfg.GNodeB.ControlIF.Port)
-
 		go gnb.InitGnbMonitored(cfg, &wg, monitorGnbs)
 		wg.Add(1)
 		time.Sleep(1 * time.Second)
