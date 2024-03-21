@@ -15,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistrationSignal chan int) {
+func RegistrationUeMonitored(conf config.Config, wg *sync.WaitGroup, ueRegistrationSignal chan int, monitorUes chan config.Config) {
 
 	// wg := sync.WaitGroup{}
 
@@ -37,7 +37,73 @@ func RegistrationUe(conf config.Config, id uint8, wg *sync.WaitGroup, ueRegistra
 		conf.Ue.Dnn,
 		int32(conf.Ue.Snssai.Sst),
 		conf.Ue.Snssai.Sd,
-		id,
+		conf.Ue.UeSessionId,
+		conf.GNodeB.PlmnList.GnbId)
+
+	// starting communication with GNB and listen.
+	ueTerminationSignal := make(chan int, 1)
+
+	err := service.InitConn(ue, ueRegistrationSignal, ueTerminationSignal)
+	if err != nil {
+		log.Warn("Error in ", err)
+		wg.Done()
+		ueRegistrationSignal <- 0
+		return
+	} else {
+		log.Info("[UE] UNIX/NAS service is running")
+		// wg.Add(1)
+	}
+
+	// registration procedure started.
+	trigger.InitRegistration(ue)
+
+	// wg.Wait()
+
+	// control the signals
+	sigUe := make(chan os.Signal, 1)
+	signal.Notify(sigUe, os.Interrupt)
+
+	// Block until a signal is received.
+	select {
+	case <-sigUe:
+		ue.Terminate()
+		wg.Done()
+	case <-ueTerminationSignal:
+		ueRegistrationSignal <- 0
+		ue.Terminate()
+		monitorUes <- conf
+		wg.Done()
+	}
+	// <- sigUe
+	// ue.Terminate()
+	// wg.Done()
+	// os.Exit(0)
+
+}
+
+func RegistrationUe(conf config.Config, wg *sync.WaitGroup, ueRegistrationSignal chan int) {
+
+	// wg := sync.WaitGroup{}
+
+	// new UE instance.
+	ue := &context.UEContext{}
+
+	// new UE context
+	ue.NewRanUeContext(
+		conf.Ue.Msin,
+		security.AlgCiphering128NEA0,
+		security.AlgIntegrity128NIA2,
+		conf.Ue.Key,
+		conf.Ue.Opc,
+		"c9e8763286b5b9ffbdf56e1297d0887b",
+		conf.Ue.Amf,
+		conf.Ue.Sqn,
+		conf.Ue.Hplmn.Mcc,
+		conf.Ue.Hplmn.Mnc,
+		conf.Ue.Dnn,
+		int32(conf.Ue.Snssai.Sst),
+		conf.Ue.Snssai.Sd,
+		conf.Ue.UeSessionId,
 		conf.GNodeB.PlmnList.GnbId)
 
 	// starting communication with GNB and listen.

@@ -33,19 +33,6 @@ func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan c
 		conf.GNodeB.ControlIF.Port,
 		conf.GNodeB.DataIF.Port)
 
-	// start communication with AMF (server SCTP).
-
-	// log.Info("conf.GNodeB.PlmnList.GnbId ", conf.GNodeB.PlmnList.GnbId)
-	// log.Info("conf.GNodeB.PlmnList.Mcc ", conf.GNodeB.PlmnList.Mcc)
-	// log.Info("conf.GNodeB.PlmnList.Mnc ", conf.GNodeB.PlmnList.Mnc)
-	// log.Info("conf.GNodeB.PlmnList.Tac ", conf.GNodeB.PlmnList.Tac)
-	// log.Info("conf.GNodeB.SliceSupportList.Sst ", conf.GNodeB.SliceSupportList.Sst)
-	// log.Info("conf.GNodeB.SliceSupportList.Sd ", conf.GNodeB.SliceSupportList.Sd)
-	// log.Info("conf.GNodeB.ControlIF.Ip ", conf.GNodeB.ControlIF.Ip)
-	// log.Info("conf.GNodeB.DataIF.Ip ", conf.GNodeB.DataIF.Ip)
-	// log.Info("conf.GNodeB.ControlIF.Port ", conf.GNodeB.ControlIF.Port)
-	// log.Info("conf.GNodeB.DataIF.Port ", conf.GNodeB.DataIF.Port)
-
 	// new AMF context.
 	amf := gnb.NewGnBAmf(conf.AMF.Ip, conf.AMF.Port)
 

@@ -36,14 +36,15 @@ type Config struct {
 		} `yaml: "slicesupportlist"`
 	} `yaml:"gnodeb"`
 	Ue struct {
-		UeNum int    `yaml: "ueNum"`
-		Msin  string `yaml: "msin"`
-		Key   string `yaml: "key"`
-		Opc   string `yaml: "opc"`
-		Amf   string `yaml: "amf"`
-		Sqn   string `yaml: "sqn"`
-		Dnn   string `yaml: "dnn"`
-		Hplmn struct {
+		UeNum       int    `yaml: "ueNum"`
+		UeSessionId uint8  `yaml: "uesessionid"`
+		Msin        string `yaml: "msin"`
+		Key         string `yaml: "key"`
+		Opc         string `yaml: "opc"`
+		Amf         string `yaml: "amf"`
+		Sqn         string `yaml: "sqn"`
+		Dnn         string `yaml: "dnn"`
+		Hplmn       struct {
 			Mcc string `yaml: "mcc"`
 			Mnc string `yaml: "mnc"`
 		} `yaml: "hplmn"`

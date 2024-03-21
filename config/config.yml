@@ -17,6 +17,7 @@ gnodeb:
 
 ue:
   ueNum: 10
+  uesessionid: 1
   msin: "1000050009"
   key: "8baf473f2f8fd09487cccbd7097c6862"
   opc: "11111111111111111111111111111111"

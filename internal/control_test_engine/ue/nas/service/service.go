@@ -45,16 +45,14 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 	buf := make([]byte, 65535)
 	conn := ue.GetUnixConn()
 
-	
 	defer func() {
-		err := conn.Close()
-		log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
-		if err != nil {
-			fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
-		}
+		conn.Close()
+		// log.Warn("*****Connection closed with UE-imsi = ", ue.GetMsin())
+		// if err != nil {
+		// 	fmt.Printf("Error in closing unix sockets for %s ue\n", ue.GetSupi())
+		// }
 	}()
-	
-	
+
 	for {
 
 		// read message.
@@ -65,7 +63,7 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 		// 	timeoutDuration := 30 * time.Second
 		// 	conn.SetReadDeadline(time.Now().Add(timeoutDuration))
 		// }
-		
+
 		n, err := conn.Read(buf[:])
 		if err != nil {
 			log.Error("*****Error on conn.Read with UE-imsi = ", ue.GetMsin())
@@ -73,7 +71,7 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 			ueTerminationSignal <- 1
 			return
 		}
-		
+
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
 
