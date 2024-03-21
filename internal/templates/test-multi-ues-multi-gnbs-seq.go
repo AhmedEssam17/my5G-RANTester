@@ -54,6 +54,7 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 		for {
 			select {
 			case gnbCfg := <-monitorGnbs:
+				time.Sleep(200 * time.Millisecond)
 				log.Info("Re-Initializing gnb with GnbId = ", gnbCfg.GNodeB.PlmnList.GnbId)
 				go gnb.InitGnbMonitored(gnbCfg, &wg, monitorGnbs)
 				wg.Add(1)
