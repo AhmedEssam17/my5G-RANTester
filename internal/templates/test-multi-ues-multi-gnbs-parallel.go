@@ -75,8 +75,9 @@ func TestMultiUesMultiGNBsParallel(numUes int, numGNBs int) {
 			ueSessionIdOffset++
 		}
 		ueSessionId = uint8(i) + ueSessionIdOffset
+		cfg.Ue.UeSessionId = ueSessionId
 
-		go ue.RegistrationUe(cfg, ueSessionId, &wg, ueRegistrationSignal)
+		go ue.RegistrationUe(cfg, &wg, ueRegistrationSignal)
 		wg.Add(1)
 
 		select {

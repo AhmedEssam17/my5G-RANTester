@@ -1,12 +1,13 @@
 package templates
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb"
 	"my5G-RANTester/internal/control_test_engine/ue"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func TestAttachUeWithConfiguration() {
@@ -25,7 +26,8 @@ func TestAttachUeWithConfiguration() {
 
 	time.Sleep(1 * time.Second)
 	ueRegistrationSignal := make(chan int, 1)
-	go ue.RegistrationUe(cfg, 1, &wg, ueRegistrationSignal)
+	cfg.Ue.UeSessionId = 1
+	go ue.RegistrationUe(cfg, &wg, ueRegistrationSignal)
 
 	wg.Add(1)
 
