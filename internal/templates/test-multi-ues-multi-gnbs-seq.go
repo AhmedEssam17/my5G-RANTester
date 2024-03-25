@@ -89,14 +89,6 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 				log.Info("Re-Registering ue with imsi = ", ueCfg.Ue.Msin)
 				go ue.RegistrationUeMonitored(cfg, &wg, ueRegistrationSignal, monitorUes)
 				wg.Add(1)
-
-				select {
-				case <-ueRegistrationSignal:
-					log.Info("[TESTER] IMSI ", ueCfg.Ue.Msin, " UE Re-REGISTERED OK")
-				case <-time.After(60 * time.Second):
-					log.Info("[TESTER] IMSI ", ueCfg.Ue.Msin, " UE Re-REGISTER TIMEOUT")
-				}
-
 				// time.Sleep(200 * time.Millisecond)
 			}
 		}
