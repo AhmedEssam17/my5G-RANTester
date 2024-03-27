@@ -32,7 +32,10 @@ func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal c
 		Remote: gatewayIp,
 	}
 
-	netlink.LinkDel(newInterface)
+	netlinkErr := netlink.LinkDel(newInterface)
+	if netlinkErr != nil {
+		log.Info("netlinkError: ", netlinkErr)
+	}
 	log.Info("Deleted old interface: %v", newInterface)
 	if err := netlink.LinkAdd(newInterface); err != nil {
 		log.Info("[UE][DATA] Error in setting virtual interface", err)
