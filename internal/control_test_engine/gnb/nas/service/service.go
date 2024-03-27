@@ -64,7 +64,7 @@ func gnbListen(gnb *context.GNBContext, triggerGnbs chan int) {
 			log.Info("[GNB][UE] Accept error: ", err)
 			break
 		}
-
+		log.Info("[GNB][UE] Accept new connection")
 		// TODO this region of the code may induces race condition.
 
 		// new instance GNB UE context
