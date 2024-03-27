@@ -122,7 +122,7 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 		select {
 		case <-ueRegistrationSignal:
 			log.Info("[TESTER] IMSI ", imsi, " UE REGISTERED OK")
-		case <-time.After(60 * time.Second):
+		case <-time.After(10 * time.Second):
 			log.Info("[TESTER] IMSI ", imsi, " UE REGISTER TIMEOUT")
 		}
 
