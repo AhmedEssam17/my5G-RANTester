@@ -2,10 +2,11 @@ package service
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/vishvananda/netlink"
 	"my5G-RANTester/internal/control_test_engine/ue/context"
 	"net"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/vishvananda/netlink"
 )
 
 var UesCounter = 0
@@ -32,6 +33,7 @@ func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal c
 	}
 
 	netlink.LinkDel(newInterface)
+	log.Info("Deleted old interface: %v", newInterface)
 	if err := netlink.LinkAdd(newInterface); err != nil {
 		log.Info("[UE][DATA] Error in setting virtual interface", err)
 		return
