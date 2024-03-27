@@ -71,6 +71,12 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 			ueTerminationSignal <- 1
 			return
 		}
+		if n == 0 {
+			log.Warn("Unix connection closed")
+			log.Warn("Terminating UE")
+			ueTerminationSignal <- 1
+			return
+		}
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
