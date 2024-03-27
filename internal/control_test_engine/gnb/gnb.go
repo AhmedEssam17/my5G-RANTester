@@ -44,8 +44,22 @@ func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan c
 		// wg.Add(1)
 	}
 
+	triggerGnbs := make(chan int, 1)
+
+	go func(triggerGnbs chan int, monitorGnbs chan config.Config) {
+		for {
+			select {
+			case <-triggerGnbs:
+				gnb.Terminate()
+				monitorGnbs <- conf
+				wg.Done()
+				return
+			}
+		}
+	}(triggerGnbs, monitorGnbs)
+
 	// start communication with UE (server UNIX sockets).
-	if err := serviceNas.InitServer(gnb); err != nil {
+	if err := serviceNas.InitServer(gnb, triggerGnbs); err != nil {
 		log.Fatal("Error in ", err)
 	} else {
 		log.Info("[GNB] UNIX/NAS service is running")
@@ -108,8 +122,9 @@ func InitGnb(conf config.Config, wg *sync.WaitGroup) {
 		// wg.Add(1)
 	}
 
+	triggerGnbs := make(chan int, 1)
 	// start communication with UE (server UNIX sockets).
-	if err := serviceNas.InitServer(gnb); err != nil {
+	if err := serviceNas.InitServer(gnb, triggerGnbs); err != nil {
 		log.Fatal("Error in ", err)
 	} else {
 		log.Info("[GNB] UNIX/NAS service is running")
@@ -164,8 +179,9 @@ func InitGnbForUeLatency(conf config.Config, sigGnb chan bool, synch chan bool) 
 		// wg.Add(1)
 	}
 
+	triggerGnbs := make(chan int, 1)
 	// start communication with UE (server UNIX sockets).
-	if err := serviceNas.InitServer(gnb); err != nil {
+	if err := serviceNas.InitServer(gnb, triggerGnbs); err != nil {
 		log.Info("Error in", err)
 
 		synch <- false

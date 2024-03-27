@@ -5,13 +5,13 @@ import (
 	"my5G-RANTester/internal/control_test_engine/gnb/nas/handler"
 )
 
-func Dispatch(ue *context.GNBUe, message []byte, gnb *context.GNBContext) {
+func Dispatch(ue *context.GNBUe, message []byte, gnb *context.GNBContext, triggerGnbs chan int) {
 
 	switch ue.GetState() {
 
 	case context.Initialized:
 		// handler UE message.
-		handler.HandlerUeInitialized(ue, message, gnb)
+		handler.HandlerUeInitialized(ue, message, gnb, triggerGnbs)
 
 	case context.Ongoing:
 		// handler UE message.

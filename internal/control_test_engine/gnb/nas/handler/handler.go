@@ -1,13 +1,14 @@
 package handler
 
 import (
-	log "github.com/sirupsen/logrus"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap/message/ngap_control/nas_transport"
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap/message/sender"
+
+	log "github.com/sirupsen/logrus"
 )
 
-func HandlerUeInitialized(ue *context.GNBUe, message []byte, gnb *context.GNBContext) {
+func HandlerUeInitialized(ue *context.GNBUe, message []byte, gnb *context.GNBContext, triggerGnbs chan int) {
 
 	// encode NAS message in NGAP.
 	ngap, err := nas_transport.SendInitialUeMessage(message, ue, gnb)
@@ -22,6 +23,7 @@ func HandlerUeInitialized(ue *context.GNBUe, message []byte, gnb *context.GNBCon
 	conn := ue.GetSCTP()
 	err = sender.SendToAmF(ngap, conn)
 	if err != nil {
+		triggerGnbs <- 1
 		log.Info("[GNB][AMF] Error sending initial UE message: ", err)
 	}
 }

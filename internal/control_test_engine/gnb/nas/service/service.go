@@ -11,10 +11,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func InitServer(gnb *context.GNBContext) error {
+func InitServer(gnb *context.GNBContext, triggerGnbs chan int) error {
 
 	// initiated GNB server with unix sockets.
-	
+
 	gnbID, err := strconv.Atoi(string(gnb.GetGnbId()))
 	sockPath := fmt.Sprintf("/tmp/gnb%d.sock", gnbID)
 
@@ -37,12 +37,12 @@ func InitServer(gnb *context.GNBContext) error {
 		}(ln, sigc)
 	*/
 
-	go gnbListen(gnb)
+	go gnbListen(gnb, triggerGnbs)
 
 	return nil
 }
 
-func gnbListen(gnb *context.GNBContext) {
+func gnbListen(gnb *context.GNBContext, triggerGnbs chan int) {
 
 	// log.Info("Before ln := gnb.GetListener()")
 	ln := gnb.GetListener()
@@ -81,12 +81,12 @@ func gnbListen(gnb *context.GNBContext) {
 
 		// accept and handle connection.
 		// log.Info("Before go processingConn(ue, gnb)")
-		go processingConn(ue, gnb)
+		go processingConn(ue, gnb, triggerGnbs)
 	}
 
 }
 
-func processingConn(ue *context.GNBUe, gnb *context.GNBContext) {
+func processingConn(ue *context.GNBUe, gnb *context.GNBContext, triggerGnbs chan int) {
 
 	buf := make([]byte, 65535)
 
@@ -106,6 +106,6 @@ func processingConn(ue *context.GNBUe, gnb *context.GNBContext) {
 
 		// send to dispatch.
 		// log.Info("Before go nas.Dispatch(ue, forwardData, gnb)")
-		go nas.Dispatch(ue, forwardData, gnb)
+		go nas.Dispatch(ue, forwardData, gnb, triggerGnbs)
 	}
 }
