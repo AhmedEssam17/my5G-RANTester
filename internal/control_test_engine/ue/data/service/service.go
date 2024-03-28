@@ -16,6 +16,7 @@ func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal c
 	// Check if message == "TERMINATE"
 	if string(message) == "TERMINATE" {
 		ueTerminationSignal <- 1
+		UesCounter--
 		return
 	}
 
