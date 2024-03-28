@@ -124,7 +124,7 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 			case ueCfg := <-monitorUes:
 				// time.Sleep(1000 * time.Millisecond)
 				log.Info("Re-Registering ue with imsi = ", ueCfg.Ue.Msin)
-				go ue.RegistrationUeMonitored(cfg, &wg, ueRegistrationSignal, monitorUes)
+				go ue.RegistrationUeMonitored(ueCfg, &wg, ueRegistrationSignal, monitorUes)
 				wg.Add(1)
 				select {
 				case <-ueRegistrationSignal:
