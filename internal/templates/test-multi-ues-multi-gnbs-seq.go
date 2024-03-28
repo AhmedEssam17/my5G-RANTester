@@ -81,19 +81,6 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 	ueRegistrationSignal := make(chan int, 1)
 	monitorUes := make(chan config.Config, numUes)
 
-	go func(monitorUes chan config.Config) {
-		for {
-			select {
-			case ueCfg := <-monitorUes:
-				time.Sleep(1000 * time.Millisecond)
-				log.Info("Re-Registering ue with imsi = ", ueCfg.Ue.Msin)
-				go ue.RegistrationUeMonitored(cfg, &wg, ueRegistrationSignal, monitorUes)
-				wg.Add(1)
-				// time.Sleep(200 * time.Millisecond)
-			}
-		}
-	}(monitorUes)
-
 	msin := cfg.Ue.Msin
 	var ueSessionIdOffset uint8 = 0
 	var ueSessionId uint8
@@ -129,6 +116,20 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 		sleepTime := 200 * time.Millisecond
 		time.Sleep(sleepTime)
 	}
+
+	// Retry registering failed UEs
+	go func(monitorUes chan config.Config) {
+		for {
+			select {
+			case ueCfg := <-monitorUes:
+				time.Sleep(1000 * time.Millisecond)
+				log.Info("Re-Registering ue with imsi = ", ueCfg.Ue.Msin)
+				go ue.RegistrationUeMonitored(cfg, &wg, ueRegistrationSignal, monitorUes)
+				wg.Add(1)
+				// time.Sleep(200 * time.Millisecond)
+			}
+		}
+	}(monitorUes)
 
 	wg.Wait()
 }
