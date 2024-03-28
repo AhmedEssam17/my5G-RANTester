@@ -111,6 +111,7 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 			log.Info("[TESTER] IMSI ", imsi, " UE REGISTERED OK")
 		case <-time.After(10 * time.Second):
 			log.Info("[TESTER] IMSI ", imsi, " UE REGISTER TIMEOUT")
+			monitorUes <- cfg
 		}
 
 		sleepTime := 200 * time.Millisecond
@@ -131,6 +132,7 @@ func TestMultiUesMultiGNBsSeq(numUes int, numGNBs int, i int) {
 					log.Info("[TESTER] IMSI ", ueCfg.Ue.Msin, " UE REGISTERED OK")
 				case <-time.After(10 * time.Second):
 					log.Info("[TESTER] IMSI ", ueCfg.Ue.Msin, " UE REGISTER TIMEOUT")
+					monitorUes <- ueCfg
 				}
 				// time.Sleep(200 * time.Millisecond)
 			}
