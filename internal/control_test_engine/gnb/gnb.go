@@ -3,6 +3,7 @@ package gnb
 import (
 	"my5G-RANTester/config"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
+	"my5G-RANTester/internal/control_test_engine/gnb/nas/message/sender"
 	serviceNas "my5G-RANTester/internal/control_test_engine/gnb/nas/service"
 	serviceNgap "my5G-RANTester/internal/control_test_engine/gnb/ngap/service"
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap/trigger"
@@ -50,6 +51,16 @@ func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan c
 		for {
 			select {
 			case <-triggerGnbs:
+				ranIdRange := gnb.IdUeGenerator
+				var ranUeId int64 = 1
+				for ranUeId = 1; ranUeId < ranIdRange; ranUeId++ {
+					ue, err := gnb.GetGnbUe(ranUeId)
+					if err != nil || ue == nil {
+						log.Error("Failed to load UE")
+					}
+					sender.SendToUe(ue, []byte("TERMINATE"))
+				}
+
 				gnb.Terminate()
 				monitorGnbs <- conf
 				wg.Done()

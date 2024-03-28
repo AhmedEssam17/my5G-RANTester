@@ -11,7 +11,13 @@ import (
 
 var UesCounter = 0
 
-func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal chan int) {
+func InitDataPlane(ue *context.UEContext, message []byte, ueRegistrationSignal chan int, ueTerminationSignal chan int) {
+
+	// Check if message == "TERMINATE"
+	if string(message) == "TERMINATE" {
+		ueTerminationSignal <- 1
+		return
+	}
 
 	log.Info("[UE][DATA] InitDataPlane")
 

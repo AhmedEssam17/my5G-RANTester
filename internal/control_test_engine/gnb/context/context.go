@@ -21,10 +21,10 @@ type GNBContext struct {
 	teidPool       sync.Map    // map[uint32]*GNBUe, downlinkTeid as key
 	ueIpPool       sync.Map    // map[string]*GNBUe, ueGnbIp as key
 	sliceInfo      Slice
-	idUeGenerator  int64  // ran UE id.
+	IdUeGenerator  int64  // ran UE id.
 	idAmfGenerator int64  // ran amf id
 	teidGenerator  uint32 // ran UE downlink Teid
-	ueIpGenerator  int  // ran ue ip.
+	ueIpGenerator  int    // ran ue ip.
 }
 
 type DataInfo struct {
@@ -60,7 +60,7 @@ func (gnb *GNBContext) NewRanGnbContext(gnbId, mcc, mnc, tac, sst, sd, ip, ipDat
 	gnb.controlInfo.gnbId = gnbId
 	gnb.sliceInfo.sd = sd
 	gnb.sliceInfo.sst = sst
-	gnb.idUeGenerator = 1
+	gnb.IdUeGenerator = 1
 	gnb.idAmfGenerator = 1
 	gnb.controlInfo.gnbIp = ip
 	gnb.teidGenerator = 1
@@ -269,10 +269,10 @@ func (gnb *GNBContext) getRanUeId() int64 {
 
 	// TODO implement mutex
 
-	id := gnb.idUeGenerator
+	id := gnb.IdUeGenerator
 
 	// increment RanUeId
-	gnb.idUeGenerator++
+	gnb.IdUeGenerator++
 
 	return id
 }

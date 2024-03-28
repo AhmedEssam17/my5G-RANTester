@@ -77,6 +77,6 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 		copy(forwardData, buf[:n])
 
 		// handling NAS message.
-		go state.DispatchState(ue, forwardData, ueRegistrationSignal)
+		go state.DispatchState(ue, forwardData, ueRegistrationSignal, ueTerminationSignal)
 	}
 }
