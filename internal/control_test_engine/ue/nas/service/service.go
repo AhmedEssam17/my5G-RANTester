@@ -71,7 +71,7 @@ func UeListen(ue *context.UEContext, ueRegistrationSignal chan int, ueTerminatio
 			ueTerminationSignal <- 1
 			return
 		}
-		log.Info("Received message on UE = ", ue.GetMsin())
+		// log.Info("Received message on UE = ", ue.GetMsin())
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
