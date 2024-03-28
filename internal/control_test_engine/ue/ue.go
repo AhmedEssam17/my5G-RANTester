@@ -47,7 +47,7 @@ func RegistrationUeMonitored(conf config.Config, wg *sync.WaitGroup, ueRegistrat
 	if err != nil {
 		log.Warn("Error in ", err)
 		wg.Done()
-		ueRegistrationSignal <- 0
+		// ueRegistrationSignal <- 0
 		monitorUes <- conf
 		return
 	} else {
