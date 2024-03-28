@@ -69,11 +69,11 @@ func RegistrationUeMonitored(conf config.Config, wg *sync.WaitGroup, ueRegistrat
 	case <-sigUe:
 		ue.Terminate()
 		log.Warn("sigUe")
-		ueRegistrationSignal <- 0
+		// ueRegistrationSignal <- 0
 		monitorUes <- conf
 		wg.Done()
 	case <-ueTerminationSignal:
-		ueRegistrationSignal <- 0
+		// ueRegistrationSignal <- 0
 		ue.Terminate()
 		log.Warn("ueTerminationSignal")
 		monitorUes <- conf
