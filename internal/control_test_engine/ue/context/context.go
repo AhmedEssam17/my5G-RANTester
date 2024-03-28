@@ -4,8 +4,6 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/vishvananda/netlink"
 	"my5G-RANTester/lib/UeauCommon"
 	"my5G-RANTester/lib/milenage"
 	"my5G-RANTester/lib/nas/nasMessage"
@@ -15,6 +13,9 @@ import (
 	"net"
 	"reflect"
 	"regexp"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/vishvananda/netlink"
 )
 
 // 5GMM main states in the UE.
@@ -563,6 +564,7 @@ func (ue *UEContext) Terminate() {
 	}
 
 	if ueUnix != nil {
+		log.Info("Closing ueUnix connection")
 		ueUnix.Close()
 	}
 
