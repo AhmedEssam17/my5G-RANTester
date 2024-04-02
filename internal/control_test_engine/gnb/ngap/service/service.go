@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap"
+	"unsafe"
 
 	"github.com/ishidawataru/sctp"
 	log "github.com/sirupsen/logrus"
@@ -116,6 +117,51 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 		return err
 	}
 
+	// buf := rem.ToRawSockAddrBuf()
+	// param := sctp.GetAddrsOld{
+	//  AddrNum: int32(len(buf)),
+	//  Addrs:   uintptr(uintptr(unsafe.Pointer(&buf[0]))),
+	// }
+	// optlen := unsafe.Sizeof(param)
+	// _, _, err = conn.Getsockopt(sctp.SCTP_SOCKOPT_CONNECTX3, uintptr(unsafe.Pointer(&param)), uintptr(unsafe.Pointer(&optlen)))
+
+	// type PAddrParams struct {
+	// 	AssocID    int32  // todo: how can we get associd for a peer ?
+	// 	Address    uint32 // todo: correct the type
+	// 	HBInterval uint32
+	// 	PathMaxRxt uint16
+	// 	PathMTU    uint32
+	// 	SACKDelay  uint32
+	// 	Flags      uint32
+	// }
+	// peerAddrParamsOptions := PAddrParams{}
+	// peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
+	// conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(peerAddrParamsOptionslen))
+	// peerAddrParamsOptions.HBInterval = 5
+	// _, _, err = conn.Setsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(peerAddrParamsOptionslen))
+	// if err != nil {
+	// 	log.Info("SCTP Setsockopt failed with error: ", err)
+	// 	return err
+	// }
+
+	type RTOInfo struct {
+		AssocID    int32 // todo: how can we get associd for a peer ?
+		RTOInitial uint32
+		RTOMin     uint32
+		RTOMax     uint32
+	}
+	rtoInfoOptions := RTOInfo{}
+	rtoInfoOptionslen := unsafe.Sizeof(rtoInfoOptions)
+	if _, _, err := conn.Getsockopt(sctp.SCTP_RTOINFO, uintptr(unsafe.Pointer(&rtoInfoOptions)), uintptr(rtoInfoOptionslen)); err != nil {
+		log.Info("SCTP Getsockopt SCTP_RTOINFO failed with error: ", err)
+		return err
+	}
+	log.Info("rotInfoOptions = ", rtoInfoOptions)
+	rtoInfoOptions.RTOMax = 5
+	if _, _, err := conn.Setsockopt(sctp.SCTP_RTOINFO, uintptr(unsafe.Pointer(&rtoInfoOptions)), uintptr(rtoInfoOptionslen)); err != nil {
+		log.Info("SCTP Setsockopt SCTP_RTOINFO failed with error: ", err)
+		return err
+	}
 	// set streams and other information about TNLA
 
 	// successful established SCTP (TNLA - N2)
