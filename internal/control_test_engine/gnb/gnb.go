@@ -37,14 +37,6 @@ func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan c
 	// new AMF context.
 	amf := gnb.NewGnBAmf(conf.AMF.Ip, conf.AMF.Port)
 
-	// start communication with AMF(SCTP).
-	if err := serviceNgap.InitConn(amf, gnb); err != nil {
-		log.Fatal("Error in", err)
-	} else {
-		log.Info("[GNB] SCTP/NGAP service is running")
-		// wg.Add(1)
-	}
-
 	triggerGnbs := make(chan int, 1)
 
 	go func(triggerGnbs chan int, monitorGnbs chan config.Config) {
@@ -68,6 +60,14 @@ func InitGnbMonitored(conf config.Config, wg *sync.WaitGroup, monitorGnbs chan c
 			}
 		}
 	}(triggerGnbs, monitorGnbs)
+
+	// start communication with AMF(SCTP).
+	if err := serviceNgap.InitConnMonitored(amf, gnb, triggerGnbs); err != nil {
+		log.Fatal("Error in", err)
+	} else {
+		log.Info("[GNB] SCTP/NGAP service is running")
+		// wg.Add(1)
+	}
 
 	// start communication with UE (server UNIX sockets).
 	if err := serviceNas.InitServer(gnb, triggerGnbs); err != nil {
