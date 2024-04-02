@@ -147,8 +147,8 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	type RTOInfo struct {
 		AssocID    int32 // todo: how can we get associd for a peer ?
 		RTOInitial uint32
-		RTOMin     uint32
 		RTOMax     uint32
+		RTOMin     uint32
 	}
 	rtoInfoOptions := RTOInfo{}
 	rtoInfoOptionslen := unsafe.Sizeof(rtoInfoOptions)
@@ -157,7 +157,7 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 		return err
 	}
 	log.Info("rtoInfoOptions Before = ", rtoInfoOptions)
-	rtoInfoOptions.RTOMax = 5
+	rtoInfoOptions.RTOMax = 5000
 	if _, _, err := conn.Setsockopt(sctp.SCTP_RTOINFO, uintptr(unsafe.Pointer(&rtoInfoOptions)), uintptr(rtoInfoOptionslen)); err != nil {
 		log.Info("SCTP Setsockopt SCTP_RTOINFO failed with error: ", err)
 		return err
