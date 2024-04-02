@@ -5,7 +5,8 @@ go 1.14
 require (
 	github.com/aead/cmac v0.0.0-20160719120800-7af84192f0b1
 	github.com/davecgh/go-spew v1.1.1
-	github.com/ishidawataru/sctp v0.0.0-20191218070446-00ab2ac2db07
+	github.com/ishidawataru/sctp v0.0.0-20230406120618-7ff4192f6ff2
+	github.com/prometheus/common v0.9.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/urfave/cli/v2 v2.3.0
 	github.com/vishvananda/netlink v1.1.0
