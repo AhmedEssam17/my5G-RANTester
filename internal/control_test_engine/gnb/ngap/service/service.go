@@ -137,7 +137,7 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	}
 	peerAddrParamsOptions := PAddrParams{}
 	peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
-	_, _, err = conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(unsafe.Pointer(&peerAddrParamsOptionslen)))
+	_, _, err = conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(peerAddrParamsOptionslen))
 	if err != nil {
 		log.Info("SCTP Getsockopt SCTP_PEER_ADDR_PARAMS failed with error: ", err)
 		return err
