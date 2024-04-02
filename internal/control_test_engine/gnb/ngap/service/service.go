@@ -136,6 +136,7 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 		Flags      uint32
 	}
 	peerAddrParamsOptions := PAddrParams{}
+	peerAddrParamsOptions.AssocID = 0
 	peerAddrParamsOptions.Address.Data = [14]int8{}
 	peerAddrParamsOptions.Address.Family = syscall.AF_INET
 	peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
