@@ -127,15 +127,16 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	// _, _, err = conn.Getsockopt(sctp.SCTP_SOCKOPT_CONNECTX3, uintptr(unsafe.Pointer(&param)), uintptr(unsafe.Pointer(&optlen)))
 
 	type PAddrParams struct {
-		AssocID    int32                  // todo: how can we get associd for a peer ?
-		Address    syscall.RawSockaddrAny // todo: correct the type
+		AssocID    int32               // todo: how can we get associd for a peer ?
+		Address    syscall.RawSockaddr // todo: correct the type
 		HBInterval uint32
 		PathMaxRxt uint16
 		PathMTU    uint32
 		SACKDelay  uint32
 		Flags      uint32
 	}
-	peerAddrParamsOptions := PAddrParams{AssocID: int32(0)}
+	peerAddrParamsOptions := PAddrParams{}
+	peerAddrParamsOptions.Address.Family = syscall.AF_INET
 	peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
 	_, _, err = conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(unsafe.Pointer(&peerAddrParamsOptionslen)))
 	if err != nil {
