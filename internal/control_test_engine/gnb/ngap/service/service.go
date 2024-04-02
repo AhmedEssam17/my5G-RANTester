@@ -127,8 +127,8 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	// _, _, err = conn.Getsockopt(sctp.SCTP_SOCKOPT_CONNECTX3, uintptr(unsafe.Pointer(&param)), uintptr(unsafe.Pointer(&optlen)))
 
 	type PAddrParams struct {
-		AssocID    int32               // todo: how can we get associd for a peer ?
-		Address    syscall.RawSockaddr // todo: correct the type
+		AssocID    int32                  // todo: how can we get associd for a peer ?
+		Address    syscall.RawSockaddrAny // todo: correct the type
 		HBInterval uint32
 		PathMaxRxt uint16
 		PathMTU    uint32
