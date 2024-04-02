@@ -152,7 +152,7 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	}
 	rtoInfoOptions := RTOInfo{}
 	rtoInfoOptionslen := unsafe.Sizeof(rtoInfoOptions)
-	if _, _, err := conn.Getsockopt(sctp.SCTP_RTOINFO, uintptr(unsafe.Pointer(&rtoInfoOptions)), uintptr(rtoInfoOptionslen)); err != nil {
+	if _, _, err := conn.Getsockopt(sctp.SCTP_RTOINFO, uintptr(unsafe.Pointer(&rtoInfoOptions)), uintptr(unsafe.Pointer(&rtoInfoOptionslen))); err != nil {
 		log.Info("SCTP Getsockopt SCTP_RTOINFO failed with error: ", err)
 		return err
 	}
