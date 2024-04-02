@@ -144,14 +144,14 @@ func GnbListenMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnb
 	*/
 
 	for {
-		n, info, err := conn.SCTPRead(buf[:])
+		n, _, err := conn.SCTPRead(buf[:])
 		if err != nil {
-			// triggerGnbs <- 1
+			triggerGnbs <- 1
 			log.Info("SCTPRead Error = ", err)
 			break
 		}
 
-		log.Info("[GNB][SCTP] Receive message in ", info.Stream, " stream\n")
+		// log.Info("[GNB][SCTP] Receive message in ", info.Stream, " stream\n")
 
 		forwardData := make([]byte, n)
 		copy(forwardData, buf[:n])
