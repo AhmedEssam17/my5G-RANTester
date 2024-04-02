@@ -125,9 +125,12 @@ func main() {
 					name := "Testing registration of multiple UEs"
 					cfg := config.Data
 
-					numUes := cfg.Ue.UeNum
-					numGNBs := cfg.GNodeB.GnbNum
+					totalNumUes := cfg.Ue.UeNum
+					totalNumGNBs := cfg.GNodeB.GnbNum
 					numTesters := cfg.Tester.TesterNum
+
+					numUes := totalNumUes / numTesters
+					numGNBs := totalNumGNBs / numTesters
 
 					log.Info("---------------------------------------")
 					log.Info("[TESTER] Starting test function: ", name)
