@@ -156,12 +156,13 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 		log.Info("SCTP Getsockopt SCTP_RTOINFO failed with error: ", err)
 		return err
 	}
-	log.Info("rotInfoOptions = ", rtoInfoOptions)
+	log.Info("rtoInfoOptions Before = ", rtoInfoOptions)
 	rtoInfoOptions.RTOMax = 5
 	if _, _, err := conn.Setsockopt(sctp.SCTP_RTOINFO, uintptr(unsafe.Pointer(&rtoInfoOptions)), uintptr(rtoInfoOptionslen)); err != nil {
 		log.Info("SCTP Setsockopt SCTP_RTOINFO failed with error: ", err)
 		return err
 	}
+	log.Info("rtoInfoOptions After = ", rtoInfoOptions)
 	// set streams and other information about TNLA
 
 	// successful established SCTP (TNLA - N2)
