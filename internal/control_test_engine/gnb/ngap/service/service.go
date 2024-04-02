@@ -146,8 +146,8 @@ func GnbListenMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnb
 	for {
 		n, info, err := conn.SCTPRead(buf[:])
 		if err != nil {
-			log.Info("SCTPRead Error = ", err)
 			triggerGnbs <- 1
+			log.Info("SCTPRead Error = ", err)
 			break
 		}
 
