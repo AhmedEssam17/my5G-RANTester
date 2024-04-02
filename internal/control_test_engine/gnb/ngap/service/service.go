@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap"
+	"syscall"
 	"unsafe"
 
 	"github.com/ishidawataru/sctp"
@@ -126,8 +127,8 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	// _, _, err = conn.Getsockopt(sctp.SCTP_SOCKOPT_CONNECTX3, uintptr(unsafe.Pointer(&param)), uintptr(unsafe.Pointer(&optlen)))
 
 	type PAddrParams struct {
-		AssocID    int32  // todo: how can we get associd for a peer ?
-		Address    uint32 // todo: correct the type
+		AssocID    int32               // todo: how can we get associd for a peer ?
+		Address    syscall.RawSockaddr // todo: correct the type
 		HBInterval uint32
 		PathMaxRxt uint16
 		PathMTU    uint32
