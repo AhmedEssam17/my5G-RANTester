@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"my5G-RANTester/internal/control_test_engine/gnb/context"
 	"my5G-RANTester/internal/control_test_engine/gnb/ngap"
+	"syscall"
 	"unsafe"
 
 	"github.com/ishidawataru/sctp"
@@ -126,32 +127,32 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 	// _, _, err = conn.Getsockopt(sctp.SCTP_SOCKOPT_CONNECTX3, uintptr(unsafe.Pointer(&param)), uintptr(unsafe.Pointer(&optlen)))
 
 	// TODO: Correct this section to fix the bug "SCTP Getsockopt SCTP_PEER_ADDR_PARAMS failed with error: invalid argument"
-	// type PAddrParams struct {
-	// 	AssocID    int32               // todo: how can we get associd for a peer ?
-	// 	Address    syscall.RawSockaddr // todo: correct the type
-	// 	HBInterval uint32
-	// 	PathMaxRxt uint16
-	// 	PathMTU    uint32
-	// 	SACKDelay  uint32
-	// 	Flags      uint32
-	// }
-	// peerAddrParamsOptions := PAddrParams{}
-	// peerAddrParamsOptions.AssocID = 0
-	// peerAddrParamsOptions.Address.Family = syscall.AF_INET
-	// peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
-	// _, _, err = conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(unsafe.Pointer(&peerAddrParamsOptionslen)))
-	// if err != nil {
-	// 	log.Info("SCTP Getsockopt SCTP_PEER_ADDR_PARAMS failed with error: ", err)
-	// 	return err
-	// }
-	// log.Info("peerAddrParamsOptions Before = ", peerAddrParamsOptions)
-	// peerAddrParamsOptions.HBInterval = 5
-	// _, _, err = conn.Setsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(peerAddrParamsOptionslen))
-	// if err != nil {
-	// 	log.Info("SCTP Setsockopt SCTP_PEER_ADDR_PARAMS failed with error: ", err)
-	// 	return err
-	// }
-	// log.Info("peerAddrParamsOptions After = ", peerAddrParamsOptions)
+	type PAddrParams struct {
+		AssocID    int32               // todo: how can we get associd for a peer ?
+		Address    syscall.RawSockaddr // todo: correct the type
+		HBInterval uint32
+		PathMaxRxt uint16
+		PathMTU    uint32
+		SACKDelay  uint32
+		Flags      uint32
+	}
+	peerAddrParamsOptions := PAddrParams{}
+	peerAddrParamsOptions.AssocID = 0
+	peerAddrParamsOptions.Address.Family = syscall.AF_INET
+	peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
+	_, _, err = conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(unsafe.Pointer(&peerAddrParamsOptionslen)))
+	if err != nil {
+		log.Info("SCTP Getsockopt SCTP_PEER_ADDR_PARAMS failed with error: ", err)
+		return err
+	}
+	log.Info("peerAddrParamsOptions Before = ", peerAddrParamsOptions)
+	peerAddrParamsOptions.HBInterval = 5
+	_, _, err = conn.Setsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(peerAddrParamsOptionslen))
+	if err != nil {
+		log.Info("SCTP Setsockopt SCTP_PEER_ADDR_PARAMS failed with error: ", err)
+		return err
+	}
+	log.Info("peerAddrParamsOptions After = ", peerAddrParamsOptions)
 
 	type RTOInfo struct {
 		AssocID    int32 // todo: how can we get associd for a peer ?
