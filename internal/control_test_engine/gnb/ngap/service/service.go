@@ -137,7 +137,7 @@ func InitConnMonitored(amf *context.GNBAmf, gnb *context.GNBContext, triggerGnbs
 		Flags      uint32
 	}
 	peerAddrParamsOptions := PAddrParams{}
-	peerAddrParamsOptions.AssocID = 0
+	// peerAddrParamsOptions.AssocID = 0
 	peerAddrParamsOptions.Address.Family = syscall.AF_INET
 	peerAddrParamsOptionslen := unsafe.Sizeof(peerAddrParamsOptions)
 	_, _, err = conn.Getsockopt(sctp.SCTP_PEER_ADDR_PARAMS, uintptr(unsafe.Pointer(&peerAddrParamsOptions)), uintptr(unsafe.Pointer(&peerAddrParamsOptionslen)))
